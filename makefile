@@ -3,11 +3,11 @@ CC := gcc
 SRC_DIR := src
 BUILD_DIR := build
 BIN_DIR := bin
-TARGET := bin/main
+TARGET := bin/editor
 SRC_EXT := c
 SOURCES := $(shell find $(SRC_DIR) -type f -name *.$(SRC_EXT))
 OBJECTS := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(SOURCES:.$(SRC_EXT)=.o))
-CFLAGS :=
+CFLAGS := -g -Wall -Wextra
 INC := -I inc
 
 # Execution command
