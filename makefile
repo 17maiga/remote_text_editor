@@ -7,7 +7,7 @@ TARGET := bin/editor
 SRC_EXT := c
 SOURCES := $(shell find $(SRC_DIR) -type f -name *.$(SRC_EXT))
 OBJECTS := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(SOURCES:.$(SRC_EXT)=.o))
-CFLAGS := -g -Wall -Wextra -pthread
+CFLAGS := -g -Wall -Wextra -lpthread
 INC := -I inc
 
 # Execution command
@@ -24,7 +24,7 @@ build: $(TARGET)
 $(TARGET): $(OBJECTS)
 	@echo "MAKEFILE :: Linking..."
 	@mkdir -p $(BIN_DIR)
-	@echo "MAKEFILE :: $(CC) $^ -o $(TARGET)"; $(CC) $^ -o $(TARGET)
+	@echo "MAKEFILE :: $(CC) $^ $(CFLAGS) -o $(TARGET)"; $(CC) $^ $(CFLAGS) -o $(TARGET)
 
 # Build files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.$(SRC_EXT)

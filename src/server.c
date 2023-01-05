@@ -8,23 +8,37 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-#define PORT 15360
+#include "server.h"
+#include "instruction.h"
+
 #define BACKLOG 0
 
+
 void* client_connected(void* new_fd) {
+    int fd = *((int*) new_fd);
+    char name[20];
+    sprintf(name, "res/file_of_%d", fd);
+
+    FILE* file = fopen(name, "w");
+
     int running = 1;
     while (running == 1) {
-        char buffer[1024];
+        char buffer[INSTRUCTION_LENGTH];
         int numbytes;
-        if ((numbytes = recv(*((int*) new_fd), buffer, 1024, 0)) == -1) {
-            perror("recv");
+        if ((numbytes = read(fd, buffer, INSTRUCTION_LENGTH)) == -1) {
+            perror("read_fct");
             exit(1);
+        } else if (strncmp(buffer, ":q\n", 3) == 0 || numbytes == 0) {
+            printf("Le client %d s'est déconnecté\n", fd);
+            fflush(stdout);
+            running = 0;
         } else {
             buffer[numbytes] = '\0';
-            if (strcmp(buffer, ":q\n") == 0) running = 0;
             printf("Received message: %s", buffer);
+            fprintf(file, "%s", buffer);
         }
     }    
+    fclose(file);
     pthread_exit(NULL);
 }
 
@@ -59,16 +73,14 @@ int srv_run() {
     while (running == 1) {
         sin_size = sizeof(client_addr);
         if ((new_fd = accept(sockfd, (struct sockaddr *)&client_addr, &sin_size)) == -1) {
-            perror("accept");
-                exit(1);
+            perror("accept_error");
+            exit(1);
         }
 
         pthread_t pthread;
         pthread_create(&pthread, NULL, client_connected, ((void*) &new_fd));
 
         printf("Received connection from %s\n", inet_ntoa(client_addr.sin_addr));
-        
-        
     }
 
 
