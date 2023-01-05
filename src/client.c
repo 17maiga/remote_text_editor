@@ -43,7 +43,7 @@
     // }
 
 
-int clt_run() {
+int clt_run(int port) {
     int sockfd;
     struct sockaddr_in server_addr;
 
@@ -53,7 +53,7 @@ int clt_run() {
     }
 
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
+    server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
     memset(server_addr.sin_zero, '\0', sizeof(server_addr.sin_zero));
 
@@ -62,7 +62,7 @@ int clt_run() {
         exit(1);
     }
 
-    printf("Connected to server at %s:%d\n", SERVER_IP, PORT);
+    printf("Connected to server at %s:%d\n", SERVER_IP, port);
 
     int running = 1;
     while (running == 1) {

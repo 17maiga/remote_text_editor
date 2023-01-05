@@ -5,8 +5,6 @@
 
 #define INSTRUCTION_LENGTH 800
 #define LINE_LENGTH 80
-#define PORT 16859
-
 
 typedef enum ins_mode_e {NORMAL, LOWER, UPPER} ins_mode_t;
 

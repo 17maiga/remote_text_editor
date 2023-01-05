@@ -4,7 +4,7 @@
 /**
  * Main server execution loop.
  */
-int srv_run(void);
+int srv_run(int port);
 
 void* client_connected();
 

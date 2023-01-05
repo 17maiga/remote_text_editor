@@ -4,6 +4,6 @@
 /**
  * Main client execution loop.
  */
-int clt_run(void);
+int clt_run(int port);
 
 #endif // REMOTE_TEXT_EDITOR_CLIENT_H
