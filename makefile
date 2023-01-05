@@ -7,7 +7,7 @@ TARGET := bin/editor
 SRC_EXT := c
 SOURCES := $(shell find $(SRC_DIR) -type f -name *.$(SRC_EXT))
 OBJECTS := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(SOURCES:.$(SRC_EXT)=.o))
-CFLAGS := -g -Wall -Wextra
+CFLAGS := -g -Wall -Wextra -pthread
 INC := -I inc
 
 # Execution command

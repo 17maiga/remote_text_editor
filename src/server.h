@@ -6,4 +6,6 @@
  */
 int srv_run(void);
 
+void* client_connected();
+
 #endif // REMOTE_TEXT_EDITOR_SERVER_H
