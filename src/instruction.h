@@ -5,6 +5,11 @@
 
 #define INSTRUCTION_LENGTH 800
 #define LINE_LENGTH 80
+#define MIN_WRITING_LENGTH 5 // 5 is proposed as it is the minimum length required for a bulleted command with wrapped text
+// > -t-
+// > -e-
+// > -s-
+// > -t-
 
 typedef enum ins_mode_e {NORMAL, LOWER, UPPER} ins_mode_t;
 
@@ -127,17 +132,21 @@ typedef enum command_e {
  * instruction.
  *
  * @param[in]  text
+ * @param[in]  prev_block_lvl
+ * @param[in]  prev_indent_lvl
  * @param[out] instruction
  */
-ins_t* ins_parse(char* text);
+ins_t* ins_parse(char* text, int prev_block_lvl, int prev_indent_lvl);
 
 /**
  * Transforms an enriched text instruction into the final text to be written.
  *
  * @param[in]  instruction
+ * @param[in]  prev_block_lvl
+ * @param[in]  prev_indent_lvl
  * @param[in]  line_count
  * @param[out] lines
  */
-char** ins_render(ins_t* instruction, int* line_count);
+char** ins_render(ins_t* instruction, int prev_block_lvl, int* line_count);
 
 #endif // REMOTE_TEXT_EDITOR_INSTRUCTION_H

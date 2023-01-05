@@ -4,9 +4,11 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <unistd.h>
 
 #include "server.h"
 #include "instruction.h"
@@ -16,7 +18,12 @@
 void* client_connected(void* new_fd) {
     int fd = *((int*) new_fd);
     char name[20];
-    sprintf(name, "res/file_of_%d", fd);
+    int block_level = 0;
+    int indentation_level = 0;
+    struct stat st = {0};
+    if (stat("res", &st) == -1)
+        mkdir("res", 0700);
+    sprintf(name, "res/file_%d.txt", fd);
 
     FILE* file = fopen(name, "w");
 
@@ -27,14 +34,34 @@ void* client_connected(void* new_fd) {
         if ((numbytes = read(fd, buffer, INSTRUCTION_LENGTH)) == -1) {
             perror("read_fct");
             exit(1);
-        } else if (strncmp(buffer, ":q\n", 3) == 0 || numbytes == 0) {
+        } else if (strncmp(buffer, "q\n", 2) == 0 || numbytes == 0) {
             printf("Le client %d s'est déconnecté\n", fd);
             fflush(stdout);
+            // Close any remaining blocks
+            while (block_level > 0) {
+                for (int i = 0; i < block_level - 1; i++)
+                    fprintf(file, "|");
+                fprintf(file, "+");
+                for (int i = 0; i < LINE_LENGTH - (2*block_level); i++)
+                    fprintf(file, "-");
+                fprintf(file, "+");
+                for (int i = 0; i < block_level - 1; i++)
+                    fprintf(file, "|");
+                fprintf(file, "\n");
+                block_level--;
+            }
             running = 0;
         } else {
             buffer[numbytes] = '\0';
-            printf("Received message: %s", buffer);
-            fprintf(file, "%s", buffer);
+            if (buffer[numbytes - 1] == '\n')
+                buffer[numbytes - 1] = '\0';
+            ins_t* ins = ins_parse(buffer, block_level, indentation_level);
+            int line_count;
+            char** lines = ins_render(ins, block_level, &line_count);
+            block_level = ins->blocks;
+            indentation_level = ins->indent;
+            for (int i = 0; i < line_count; i++)
+                fprintf(file, "%s\n", lines[i]);
         }
     }
     fclose(file);
