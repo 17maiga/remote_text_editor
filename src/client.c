@@ -12,37 +12,6 @@
 
 #define SERVER_IP "127.0.0.1"
 
-
-    // int test(void) {
-    //     printf("Running client...\n");
-
-    //     char ins_txt[INSTRUCTION_LENGTH + 1];
-    //     ins_txt[INSTRUCTION_LENGTH] = '\0';
-    //     while (strcmp(ins_txt, ":q") != 0){
-    //         printf("> ");
-    //         scanf("%s", ins_txt);
-
-
-
-    //         // ins_t* ins = ins_parse(ins_txt);
-    //         // printf("%d:%s\n", ins->content_size, ins->content);
-    //         // int line_count;
-    //         // char** lines = ins_render(ins, &line_count);
-
-    //         // for (int i = 0; i < line_count; i++) {
-    //         //     printf("%s\n", lines[i]);
-    //         //     free(lines[i]);
-    //         // }
-
-    //         // free(lines);
-    //     }
-
-
-
-    //     return 0;
-    // }
-
-
 int clt_run(int port) {
     int sockfd;
     struct sockaddr_in server_addr;
