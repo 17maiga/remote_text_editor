@@ -124,7 +124,8 @@ typedef enum command_e {
     INDENT,
     UNINDENT,
     MODE,
-    WRITE
+    WRITE,
+    NOTHING
 } command_t;
 
 /**

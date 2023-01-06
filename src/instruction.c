@@ -22,15 +22,6 @@ void ins_delete(ins_t* instruction) {
 
 void ins_set_mode(ins_t* instruction, ins_mode_t mode) {
     instruction->mode = mode;
-    if (mode == UPPER)
-        for (int i = 0; i < instruction->content_size; i++) {
-            printf("%d", instruction->content[i]);
-            instruction->content[i] = toupper(instruction->content[i]);
-        }
-    else if (mode == LOWER)
-        for (int i = 0; i < instruction->content_size; i++)
-            instruction->content[i] = tolower(instruction->content[i]);
-
 }
 
 void ins_open_block(ins_t* instruction) {
@@ -158,7 +149,12 @@ ins_t* ins_parse(char* text, int prev_block_lvl, int prev_indent_lvl) {
                             case WRITE:
                                 status = TEXT;
                                 break;
+                            case NOTHING:
+                                break;
                         }
+                        break;
+                    default:
+                        command = NOTHING;
                         break;
                 }
                 break;
@@ -201,6 +197,8 @@ ins_t* ins_parse(char* text, int prev_block_lvl, int prev_indent_lvl) {
                             break;
                         case WRITE:
                             status = TEXT;
+                            break;
+                        case NOTHING:
                             break;
                     }
                     status = COMMAND;
@@ -254,6 +252,8 @@ ins_t* ins_parse(char* text, int prev_block_lvl, int prev_indent_lvl) {
             case WRITE:
                 status = TEXT;
                 break;
+            case NOTHING:
+                break;
         }
     } else if (status == COMMAND) {
         switch(command) {
@@ -279,6 +279,8 @@ ins_t* ins_parse(char* text, int prev_block_lvl, int prev_indent_lvl) {
             case WRITE:
                 status = TEXT;
                 break;
+            case NOTHING:
+                break;
         }
     }
     return instruction;
@@ -300,10 +302,19 @@ char** ins_render(ins_t* instruction, int prev_block_count, int* line_count) {
     if (instruction->content_size % writeable_length != 0)
         (*line_count)++;
     
+    if (instruction->mode == UPPER)
+        for (int i = 0; i < instruction->content_size; i++)
+            instruction->content[i] = toupper(instruction->content[i]);
+    else if (instruction->mode == LOWER)
+        for (int i = 0; i < instruction->content_size; i++)
+            instruction->content[i] = tolower(instruction->content[i]);
+
     char** lines = malloc(*line_count * sizeof(char*));
+
     int written_content = 0;
     int bullet_written = 0;
     int is_breaking_word = 0;
+
     for (int i = 0; i < *line_count; i++) {
         char* line = malloc((LINE_LENGTH + 1) * sizeof(char));
         line[LINE_LENGTH] = '\0';
@@ -380,10 +391,10 @@ char** ins_render(ins_t* instruction, int prev_block_count, int* line_count) {
                         instruction->content[written_content++];
                 }
                 // Write the rest of the line until the last character
-                while (writing_index < LINE_LENGTH - writing_block_index - 1) {
+                while (writing_index < LINE_LENGTH - writing_block_index - 1)
                     line[writing_index++] =
                         instruction->content[written_content++];
-                }
+
                 if (instruction->content[written_content] != ' ' &&
                     instruction->content[written_content + 1] != ' ') {
                     if (instruction->content[written_content - 1] == ' ') {
@@ -424,4 +435,5 @@ char** ins_render(ins_t* instruction, int prev_block_count, int* line_count) {
         lines[i] = line;
     }
     return lines;
+    fflush(stdout);
 }
