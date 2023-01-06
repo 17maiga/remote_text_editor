@@ -27,6 +27,7 @@ int main(int argc, char** argv) {
             case '?':
                 printf("Error: Unknown option: %c\n", optopt);
                 usage();
+                exit(EXIT_FAILURE);
                 break;
         }
     }

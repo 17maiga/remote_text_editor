@@ -15,8 +15,11 @@
 
 #define BACKLOG 0
 
+pthread_mutex_t mon_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 void* client_connected(void* new_fd) {
     int fd = *((int*) new_fd);
+    pthread_mutex_unlock(&mon_mutex);
     char name[20];
     int block_level = 0;
     int indentation_level = 0;
@@ -95,22 +98,21 @@ int srv_run(int port) {
 
     printf("Listening for connections on port %d...\n", port);
 
-    pthread_mutex_t mon_mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&mon_mutex);
 
     int running = 1;
     while (running == 1) {
-        pthread_mutex_lock(&mon_mutex);
         sin_size = sizeof(client_addr);
         if ((new_fd = accept(sockfd, (struct sockaddr *)&client_addr, &sin_size)) == -1) {
             perror("accept_error");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
 
         pthread_t pthread;
         pthread_create(&pthread, NULL, client_connected, ((void*) &new_fd));
 
         printf("Received connection from %s\n", inet_ntoa(client_addr.sin_addr));
-        pthread_mutex_unlock(&mon_mutex);
+        pthread_mutex_lock(&mon_mutex);
     }
 
     close(new_fd);

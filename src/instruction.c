@@ -23,11 +23,14 @@ void ins_delete(ins_t* instruction) {
 void ins_set_mode(ins_t* instruction, ins_mode_t mode) {
     instruction->mode = mode;
     if (mode == UPPER)
-        for (int i = 0; i < instruction->content_size; i++)
+        for (int i = 0; i < instruction->content_size; i++) {
+            printf("%d", instruction->content[i]);
             instruction->content[i] = toupper(instruction->content[i]);
+        }
     else if (mode == LOWER)
         for (int i = 0; i < instruction->content_size; i++)
             instruction->content[i] = tolower(instruction->content[i]);
+
 }
 
 void ins_open_block(ins_t* instruction) {
@@ -201,10 +204,10 @@ ins_t* ins_parse(char* text, int prev_block_lvl, int prev_indent_lvl) {
                             break;
                     }
                     status = COMMAND;
-                } else if (c < '0' || c > '9')
-                    continue;
-                else
+                } else if ((c >= '0' && c <= '9') || c == 'n' || c == 'u' || c == 'l')
                     buffer[buflen++] = c;
+                else
+                    continue;
                 break;
             case TEXT:
                 instruction->content[instruction->content_size++] = c;
