@@ -69,7 +69,7 @@ int clt_run(int port) {
         char message[INSTRUCTION_LENGTH];
         printf("> ");
         fgets(message, INSTRUCTION_LENGTH, stdin);
-        if (strcmp(message, ":q\n") == 0)
+        if (strcmp(message, "q\n") == 0)
         {
             send(sockfd, message, strlen(message), 0);
             running = 0;
