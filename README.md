@@ -1,5 +1,8 @@
-# Design ideas
-## Client
+# remote_text_editor
+An extremely bad text editor over sockets. Made as part of a university assignment with [artred02](https://github.com/artred02).
+
+## Design ideas
+### Client
 - Client defines various operands. User can run instructions one after the other 
   by typing them into a prompt. The syntax is as follows:
   ```
